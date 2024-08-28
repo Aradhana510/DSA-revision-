@@ -1,0 +1,80 @@
+Problem Description
+Given an array of integers A.
+
+A represents a histogram i.e A[i] denotes the height of the ith histogram's bar. Width of each bar is 1.
+
+Find the area of the largest rectangle formed by the histogram.
+
+
+
+Problem Constraints
+1 <= |A| <= 100000
+
+1 <= A[i] <= 10000
+
+
+
+Input Format
+The only argument given is the integer array A.
+
+
+
+Output Format
+Return the area of the largest rectangle in the histogram.
+
+
+
+Example Input
+Input 1:
+
+ A = [2, 1, 5, 6, 2, 3]
+Input 2:
+
+ A = [2]
+
+
+Example Output
+Output 1:
+
+ 10
+Output 2:
+
+ 2
+
+
+Example Explanation
+Explanation 1:
+
+The largest rectangle has area = 10 unit. Formed by A[3] to A[4].
+Explanation 2:
+
+Largest rectangle has area 2.
+
+SOLUTION
+
+class Solution:
+    # @param A : list of integers
+    # @return an integer
+    def largestRectangleArea(self, A):
+        lenA = len(A)
+        leftSmaller = [-1]* lenA
+        rightSmaller = [lenA]* lenA
+
+        stack = []
+        for ele in range(lenA):
+            while stack and A[stack[-1]] >= A[ele]:
+                stack.pop()
+            if stack:
+                leftSmaller[ele] = stack[-1]
+            stack.append(ele)
+
+        stack = []
+        for ele in range(lenA-1, -1, -1):
+            while stack and A[stack[-1]] >= A[ele]:
+                stack.pop()
+            if stack:
+                rightSmaller[ele] = stack[-1]
+            stack.append(ele)
+
+        out = max([A[i] * (rightSmaller[i]-leftSmaller[i]-1) for i in range(lenA)])
+        return out

@@ -1,0 +1,47 @@
+We have a list of asteroids representing asteroids in a row. Each asteroid is represented by its size, and
+an integer array asteroids represents the sizes of the asteroids in the order they appear. The asteroids
+with negative sizes move to the left, and the asteroids with positive sizes move to the right. When two
+asteroids collide, the smaller asteroid will explode. If they are the same size, both asteroids will be
+destroyed. Two asteroids moving in the same direction will never collide.
+
+Input: [5, 10, -5]
+Output: [5, 10]
+Explanation:
+The asteroid 10 and -5 collide resulting in the -5 asteroid being destroyed.
+
+Input: [10,2,-5]
+Output: [10]
+Explanation:
+The 2 and -5 collide resulting in -5. The 10 and -5 collide resulting in 10.
+
+Input: [2,3,4,-6,7,-9,10]
+output: [-6, -9, 10]
+
+[-5, 6, -8]
+
+def asteroidCollision(asteroids):
+    stack = []
+    
+    for asteroid in asteroids:
+        # Process collision
+        while stack and asteroid < 0 and stack[-1] > 0:
+            if stack[-1] < -asteroid:  # Current asteroid destroys the one on top of stack
+                stack.pop()
+                continue
+            elif stack[-1] == -asteroid:  # Both asteroids destroy each other
+                stack.pop()
+            break
+        else:
+            stack.append(asteroid)
+    
+    return stack
+
+# Take user input
+input_str = input("Enter asteroid sizes (space-separated): ")
+
+# Convert the input string to a list of integers
+asteroids = list(map(int, input_str.split()))
+
+# Call the function and print the result
+result = asteroidCollision(asteroids)
+print("Remaining asteroids after collisions:", result)

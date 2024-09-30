@@ -1,0 +1,147 @@
+Problem Description
+
+Given two strings A and B. Each string represents an expression consisting of lowercase English alphabets, '+', '-', '(' and ')'.
+
+
+The task is to compare them and check if they are similar. If they are identical, return 1 else, return 0.
+
+NOTE: It may be assumed that there are at most 26 operands from ‘a’ to ‘z’, and every operand appears only once.
+
+
+
+
+Problem Constraints
+
+1 <= length of the each String <= 100
+
+
+
+Input Format
+
+The given arguments are string A and string B.
+
+
+
+Output Format
+
+Return 1 if they represent the same expression else return 0.
+
+
+
+Example Input
+
+Input 1:
+
+ A = "-(a+b+c)"
+ B = "-a-b-c"
+Input 2:
+
+ A = "a-b-(c-d)"
+ B = "a-b-c-d"
+
+
+Example Output
+
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+
+Explanation 1:
+
+ The expression "-(a+b+c)" can be written as "-a-b-c" which is equal as B. 
+Explanation 2:
+
+ Both the expression are different.
+
+SOLUTION
+
+public class Solution {
+    // Function to compare two expressions
+    public int solve(String A, String B) {
+        // Initialize frequency arrays for both expressions
+        int[] freqA = getfreq(A); 
+        int[] freqB = getfreq(B); 
+
+        // Compare frequency arrays for each variable
+        for (int i = 0; i < 26; i++) {
+            if (freqA[i] != freqB[i]) {
+                return 0;  // Expressions are different
+            }
+        }
+
+        return 1;  // Expressions are similar
+    }
+
+    // Function to calculate the frequency of variables in the expression
+    public int[] getfreq(String st) {
+        // Initialize frequency array for 26 variables
+        int[] ans = new int[26]; 
+        
+        // Stack to keep track of the global sign
+        Stack<Boolean> globalStack = new Stack<>(); 
+        globalStack.push(true);  // Assume the global sign is positive initially
+
+        // Iterate through the characters in the expression
+        for (int i = 0; i < st.length(); i++) {
+            char ch = st.charAt(i); 
+
+            if (i != 0 && ch == '(') {
+                // Handle the global sign for parentheses
+                char before = st.charAt(i - 1); 
+
+                if (before == '-') {
+                    // Invert the global sign if the previous character was '-'
+                    if (globalStack.peek() == true) {
+                        globalStack.push(false); 
+                    } else {
+                        globalStack.push(true); 
+                    }
+                } else {
+                    // Keep the same global sign if the previous character was '+'
+                    if (globalStack.peek() == true) {
+                        globalStack.push(true); 
+                    } else {
+                        globalStack.push(false); 
+                    }
+                }
+            } else if (ch == ')') {
+                // Remove the current global sign since the parenthesis is closed
+                globalStack.pop(); 
+            } else if (i == 0 && ch >= 'a' && ch <= 'z') {
+                // Set the frequency for the first variable based on the global sign
+                ans[ch - 'a'] = 1; 
+            } else if (ch >= 'a' && ch <= 'z') {
+                // Set the frequency for subsequent variables based on the global sign
+                char before = st.charAt(i - 1); 
+
+                if (before == '-') {
+                    if (globalStack.peek() == false) {
+                        ans[ch - 'a'] = 1; 
+                    }
+                } else {
+                    if (globalStack.peek() == true) {
+                        ans[ch - 'a'] = 1; 
+                    }
+                }
+            }
+        }
+
+        return ans;  // Return the final frequency array
+    }
+}
+
+// Time Complexity: O(N)
+//   N is the length of the input string.
+//   The function iterates through each character in the string once.
+
+// Space Complexity: O(N)
+//   The function uses a stack to keep track of the global sign, and the size
+//   of the stack can be at most equal to the length of the input string.
+//   Additionally, the function uses an array of size 26 to store the frequency
+//   of each variable.
